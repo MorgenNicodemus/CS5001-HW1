@@ -172,11 +172,17 @@ def main():
             continue
         else:
             IanA.remove_node(node)
-    print("Computing Difference")
+    print("\nComputing Difference")
 
     D = nx.difference(Aq, IanA)
     D.remove_nodes_from(list(nx.isolates(D)))
     print(nx.info(D))
+
+    #Computing Intersection
+    print("\nIntersection")
+    I = nx.intersection(Aq,IanA)
+    I.remove_nodes_from(list(nx.isolates(I)))
+    print(nx.info(I))
 
 if __name__ == '__main__':
     main()
