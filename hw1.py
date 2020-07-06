@@ -67,7 +67,7 @@ def Aqualung():
     #top_indegree = sorted(dict(G.in_degree()).items(),
     #                      reverse=True, key=itemgetter(1))[:100]
     #print("\n".join(map(lambda t: "{} {}".format(*reversed(t)), top_indegree)))
-    return F
+    return nx.DiGraph(G)
 
 #Do Ian Anderson
 def Ian():
@@ -126,23 +126,22 @@ def Ian():
     #top_indegree = sorted(dict(G.in_degree()).items(),
     #                      reverse=True, key=itemgetter(1))[:100]
     #print("\n".join(map(lambda t: "{} {}".format(*reversed(t)), top_indegree)))
-    return F
+    return nx.DiGraph(G)
 
 
 def main():
     print("Generating Aq")
     Aq = Aqualung()
-    #IanA = Ian()
+    print("Generating IanA")
+    IanA = Ian()
     print("Computing similarity")
-
-    As = nx.simrank_similarity(Aq,max_iterations=5)
-    print("Done with simrank")
+    nx.write_edgelist(Aq, "aq.edgelist")
+    #As = nx.simrank_similarity(Aq,max_iterations=5)
+    #print("Done with simrank")
 
     G1 = nx.DiGraph()
     G1.add_nodes_from([1,2,3,4,5])
     G1.add_edges_from([(1,2),(1,3),(1,4),(4,5)])
-
-
 
     #s = nx.simrank_similarity(G1)
     #A = [[s[u][v] for v in sorted(s[u])] for u in sorted(s)]
@@ -158,27 +157,26 @@ def main():
      #       if sim_val >= 0.01:
      #           print(node, node2, sim_val)
 
-
-    #Double check this works
-
-    #Double check this works
     #removing nodes for networkx.difference
-    #AqL = list(Aq.nodes)
-    #IanAL = list(IanA.nodes)
+    AqL = list(Aq.nodes)
+    IanAL = list(IanA.nodes)
 
-    #for node in AqL:
-    #    if (node in IanAL):
-    #        continue
-    #    else:
-    #        Aql.remove_node(node)
+    for node in AqL:
+        if (node in IanAL):
+            continue
+        else:
+            Aq.remove_node(node)
 
-    #for node in IanAL:
-    #    if (node in AqL):
-    #        continue
-    #    else:
-    #        IanA.remove_node(node)
+    for node in IanAL:
+        if (node in AqL):
+            continue
+        else:
+            IanA.remove_node(node)
+    print("Computing Difference")
 
-
+    D = nx.difference(Aq, IanA)
+    D.remove_nodes_from(list(nx.isolates(D)))
+    print(nx.info(D))
 
 if __name__ == '__main__':
     main()
